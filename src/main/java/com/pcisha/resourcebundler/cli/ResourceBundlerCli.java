@@ -26,7 +26,6 @@ public class ResourceBundlerCli {
     // "bundle create" command.
     @Command(name = "create", description = "Upload files or directories and create a bundle")
     public static class Create implements Runnable {
-
         @Parameters(arity = "1..*", description = "Files or directories to upload")
         private List<String> paths;
 
@@ -57,6 +56,12 @@ public class ResourceBundlerCli {
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request,
                         HttpResponse.BodyHandlers.ofString());
 
+                if (response.statusCode() != 200) {
+                    System.err.println("Failed to create bundle.");
+                    System.err.println(response.body());
+                    return;
+                }
+
                 System.out.println("Bundle created successfully.\n"
                         + new JSONObject(response.body()).toString(2));
 
@@ -70,7 +75,6 @@ public class ResourceBundlerCli {
     // "bundle list" command.
     @Command(name = "list", description = "List all existing bundles")
     public static class ListCmd implements Runnable {
-
         @Override
         public void run() {
             try {
@@ -79,6 +83,12 @@ public class ResourceBundlerCli {
 
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request,
                         HttpResponse.BodyHandlers.ofString());
+
+                if (response.statusCode() != 200) {
+                    System.err.println("Failed to list bundles.");
+                    System.err.println(response.body());
+                    return;
+                }
 
                 System.out.println(
                         "Existing bundles:\n" + new JSONArray(response.body()).toString(2));
@@ -93,7 +103,6 @@ public class ResourceBundlerCli {
     // "bundle download" command.
     @Command(name = "download", description = "Download a bundle archive (tar.gz) by bundle_id")
     public static class Download implements Runnable {
-
         @Parameters(index = "0", description = "Bundle ID to download")
         private String id;
 
@@ -112,9 +121,8 @@ public class ResourceBundlerCli {
 
 
                 if (response.statusCode() != 200) {
-                    String errorBody = new String(response.body());
                     System.err.println("Failed to download bundle " + id);
-                    System.err.println(errorBody);
+                    System.err.println(new String(response.body()));
                     return;
                 }
 
@@ -134,13 +142,13 @@ public class ResourceBundlerCli {
 
     // Multipart Builder: streaming, copy for file data
     public static class Multipart {
-
         private static final String FORM_FIELD_NAME = "files";
         private final String boundary = UUID.randomUUID().toString();
         private final List<HttpRequest.BodyPublisher> parts = new ArrayList<>();
 
         // Adds a file part to the multipart request. This streams file content without loading it
-        // entirely into memory
+        // entirely into memory.
+        // NOTE: Multipart requires CRLF (\r\n). Do not use text blocks here.
         private void addFile(Path file) {
             try {
                 String header = "--" + boundary + "\r\n" + "Content-Disposition: form-data; name=\""
@@ -159,7 +167,6 @@ public class ResourceBundlerCli {
         // Builds the multipart request body by concatenating all parts and appending the closing
         // boundary
         private HttpRequest.BodyPublisher body() {
-            // IMPORTANT: CRLF before closing boundary
             parts.add(HttpRequest.BodyPublishers.ofString("\r\n--" + boundary + "--\r\n"));
 
             return HttpRequest.BodyPublishers

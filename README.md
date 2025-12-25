@@ -77,7 +77,7 @@ Downloads a tar.gz archive containing the bundled files.
 tar -tzf output/1404819b-2fd.tar.gz
 ```
 
-Design Notes:
+### Design:
 - Deduplication is implemented via SHA-256 content hashing.
 - Multipart uploads are streamed to avoid loading files into memory.
 - Archives are generated on demand without temporary files.
@@ -85,7 +85,12 @@ Design Notes:
 - No unit tests are included per the challenge instructions.
 - Error and exception handling is implemented.
 
-Extensibility:
+### Tradeoffs
+- Multipart requests are constructed manually to minimize dependencies.
+- Archives are buffered in memory for simplicity.
+- Concurrency control and authentication are out of scope.
+
+### Extensibility:
 The codebase is structured to support easy additions such as:
 - Bundle deletion.
 - Metadata enrichment.

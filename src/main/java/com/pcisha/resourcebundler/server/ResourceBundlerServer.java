@@ -25,7 +25,9 @@ public class ResourceBundlerServer {
     private final Path filesDir = dataDir.resolve("files");
     private final Path bundlesFile = dataDir.resolve("bundles.json");
 
-    // In-memory storage of all bundle metadata
+    // In-memory storage of all bundle metadata.
+    // NOTE: This implementation assumes single-process access. Concurrency control would be
+    // required for multi-writer scenarios.
     private final Map<String, Bundle> bundles = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
@@ -69,12 +71,12 @@ public class ResourceBundlerServer {
     @GetMapping("/bundles")
     public List<Map<String, Object>> listBundles() {
         List<Map<String, Object>> listOfBundles = getListOfBundles();
-
         System.out.println("Listed " + listOfBundles.size() + " bundles.");
         return listOfBundles;
     }
 
     // Downloads a bundle as a tar.gz archive by bundle_id
+    // NOTE: Archive is buffered in memory for simplicity.
     @GetMapping("/bundles/{id}/download")
     public ResponseEntity<byte[]> downloadBundleById(@PathVariable("id") String bundle_id)
             throws Exception {
@@ -83,6 +85,7 @@ public class ResourceBundlerServer {
             System.out.println("Bundle not found: " + bundle_id);
             return ResponseEntity.notFound().build();
         }
+
         // TarArchiveOutputStream -> GzipCompressorOutputStream -> ByteArrayOutputStream
         ByteArrayOutputStream baos = getBaos(bundle);
 
@@ -123,7 +126,6 @@ public class ResourceBundlerServer {
             // Store file only if it's not already present (deduplication check)
             if (!Files.exists(stored))
                 Files.copy(tempPath, stored);
-
             fileMetadataList
                     .add(new FileMetadata(hash, file.getOriginalFilename(), file.getSize()));
         }
@@ -143,6 +145,7 @@ public class ResourceBundlerServer {
         return listOfBundles;
     }
 
+    // This buffers the full archive in memory.
     private ByteArrayOutputStream getBaos(Bundle bundle) throws FileNotFoundException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
