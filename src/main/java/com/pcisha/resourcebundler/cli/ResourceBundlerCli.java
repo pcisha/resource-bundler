@@ -1,4 +1,4 @@
-package com.fal.resourcebundler.cli;
+package com.pcisha.resourcebundler.cli;
 
 import picocli.CommandLine;
 import picocli.CommandLine.*;

@@ -4,7 +4,7 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fal</groupId>
+    <groupId>com.pcisha</groupId>
     <artifactId>resourcebundler</artifactId>
     <version>1.0.0</version>
     <description>Resource Bundler - Server and CLI</description>
@@ -59,7 +59,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.version}</version>
                 <configuration>
-                    <mainClass>com.fal.resourcebundler.ResourceBundler</mainClass>
+                    <mainClass>com.pcisha.resourcebundler.ResourceBundler</mainClass>
                 </configuration>
                 <executions>
                     <execution>

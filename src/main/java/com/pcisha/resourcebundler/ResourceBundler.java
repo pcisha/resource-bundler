@@ -1,8 +1,8 @@
-package com.fal.resourcebundler;
+package com.pcisha.resourcebundler;
 
 import java.util.Arrays;
-import com.fal.resourcebundler.cli.ResourceBundlerCli;
-import com.fal.resourcebundler.server.ResourceBundlerServer;
+import com.pcisha.resourcebundler.cli.ResourceBundlerCli;
+import com.pcisha.resourcebundler.server.ResourceBundlerServer;
 import picocli.CommandLine;
 
 public class ResourceBundler {

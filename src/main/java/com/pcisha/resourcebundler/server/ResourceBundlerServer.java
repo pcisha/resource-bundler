@@ -1,4 +1,4 @@
-package com.fal.resourcebundler.server;
+package com.pcisha.resourcebundler.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
