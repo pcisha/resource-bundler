@@ -1,0 +1,24 @@
+# Java
+*.class
+
+# Maven
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# Jar outputs
+*.jar
+
+# VS Code
+.vscode/
+settings.json
+
+# macOS
+.DS_Store
+.gitattributes
+
+# Outputs
+data/
+output/
+*.tar.gz

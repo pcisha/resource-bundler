@@ -1,0 +1,6 @@
+version: 1
+application:
+  name: resourcebundler-app
+  environment: test
+  enabled: true
+  version: 1.0.0
